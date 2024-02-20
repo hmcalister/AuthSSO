@@ -16,7 +16,7 @@ func init() {
 
 	logFileHandle := &lumberjack.Logger{
 		Filename: "./logs/log",
-		MaxSize:  1,
+		MaxSize:  100,
 		MaxAge:   31,
 		Compress: true,
 	}
