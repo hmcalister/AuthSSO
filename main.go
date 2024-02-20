@@ -13,6 +13,10 @@ func init() {
 
 	flag.Parse()
 
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	log.Debug().Msg("End Init Func")
 }
+
 func main() {
+	log.Debug().Msg("Start Main Func")
 }
