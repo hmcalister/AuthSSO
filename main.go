@@ -7,7 +7,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	mymiddleware "github.com/hmcalister/WebAuthnSSO/middleware"
-	"github.com/hmcalister/WebAuthnSSO/routes"
+	"github.com/hmcalister/WebAuthnSSO/routes/api/apiv1"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -48,10 +49,7 @@ func main() {
 	router.Use(mymiddleware.ZerologLogger)
 	router.Use(mymiddleware.RecoverWithInternalServerError)
 
-	router.Get("/api/v1/heartbeat", routes.Heartbeat)
-	router.Get("/api/v1/panic", func(w http.ResponseWriter, r *http.Request) {
-		panic("panic function called")
-	})
+	router.Mount("/api/v1", apiv1.ApiV1Router())
 
 	http.ListenAndServe(":3000", router)
 }
