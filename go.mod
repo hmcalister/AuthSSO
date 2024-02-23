@@ -1,4 +1,4 @@
-module github.com/hmcalister/WebAuthnSSO
+module github.com/hmcalister/AuthSSO
 
 go 1.22.0
 
