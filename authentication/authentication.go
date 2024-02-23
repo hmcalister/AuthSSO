@@ -59,7 +59,7 @@ func (authParams *AuthenticationParams) NewAuthenticationDatum(uuid string, pass
 //
 // Returns true if the password matches the hash, false otherwise.
 // This function will error if len(salt) is not equal to auth_SALT_LEN constant, or if len(authDatum.Hashedpassword) is not equal to authParams.keyLen
-func (authParams *AuthenticationParams) validateAuthenticationAttempt(authDatum *database.AuthenticationDatum, passwordAttempt string) (bool, error) {
+func (authParams *AuthenticationParams) ValidateAuthenticationAttempt(authDatum *database.AuthenticationDatum, passwordAttempt string) (bool, error) {
 	if len(authDatum.Salt) != int(authParams.saltLen) {
 		return false, errors.New("Length of authDatum salt does not equal authParams saltLen")
 	}
