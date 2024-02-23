@@ -5,6 +5,9 @@ clean:
 	rm $(EXEC_FILE)
 	rm database/database/*
 
+sqlcGenerate:
+	cd database; sqlc generate
+
 build:
 	go build .
 
