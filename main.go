@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
-	mymiddleware "github.com/hmcalister/WebAuthnSSO/middleware"
-	"github.com/hmcalister/WebAuthnSSO/routes/api/apiv1"
+	mymiddleware "github.com/hmcalister/AuthSSO/middleware"
+	"github.com/hmcalister/AuthSSO/routes/api/apiv1"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
