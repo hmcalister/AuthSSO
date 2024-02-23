@@ -1,7 +1,9 @@
 package apiv1
 
-import "net/http"
+import (
+	"net/http"
+)
 
-func register(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusServiceUnavailable)
+func (api *ApiHandler) register(w http.ResponseWriter, r *http.Request) {
+
 }

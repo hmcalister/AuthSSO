@@ -1,12 +1,25 @@
 package apiv1
 
-import "github.com/go-chi/chi/v5"
+import (
+	"github.com/go-chi/chi/v5"
+)
 
-func ApiV1Router() *chi.Mux {
-	apiRouter := chi.NewRouter()
+type ApiHandler struct {
+	apiRouter *chi.Mux
+	// databaseConn
+}
 
-	apiRouter.Get("/heartbeat", heartbeat)
-	apiRouter.Get("/register", register)
+func (api *ApiHandler) Router() *chi.Mux {
+	return api.apiRouter
+}
 
-	return apiRouter
+func NewApiRouter() *ApiHandler {
+	apiRouterData := &ApiHandler{
+		apiRouter: chi.NewRouter(),
+	}
+
+	apiRouterData.apiRouter.Get("/heartbeat", heartbeat)
+	apiRouterData.apiRouter.Get("/register", apiRouterData.register)
+
+	return apiRouterData
 }
