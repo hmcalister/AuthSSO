@@ -11,6 +11,8 @@ sqlcGenerate:
 build:
 	go build .
 
+all: sqlcGenerate build
+
 dev: build
 	./$(EXEC_FILE -debug)
 
