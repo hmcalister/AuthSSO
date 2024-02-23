@@ -1,12 +1,14 @@
+EXEC_FILE := AuthSSO
+
 clean:
 	rm logs/*
-	rm WebAuthnSSO
+	rm $(EXEC_FILE)
 
 build:
 	go build .
 
 dev: build
-	./WebAuthnSSO -debug
+	./$(EXEC_FILE -debug)
 
 run: build
-	./WebAuthnSSO
+	./$(EXEC_FILE)
