@@ -3,6 +3,7 @@ EXEC_FILE := AuthSSO
 clean:
 	rm logs/*
 	rm $(EXEC_FILE)
+	rm database/database/*
 
 build:
 	go build .
