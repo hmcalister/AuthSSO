@@ -49,7 +49,8 @@ func main() {
 	router.Use(mymiddleware.ZerologLogger)
 	router.Use(mymiddleware.RecoverWithInternalServerError)
 
-	router.Mount("/api/v1", apiv1.ApiV1Router())
+	apiV1Router := apiv1.NewApiRouter()
+	router.Mount("/api/v1", apiV1Router.Router())
 
 	http.ListenAndServe(":3000", router)
 }
