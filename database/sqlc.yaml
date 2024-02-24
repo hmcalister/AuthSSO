@@ -5,5 +5,5 @@ sql:
     schema: "schema.sql"
     gen:
       go:
-        package: "database"
-        out: "database"
+        package: "sqlc"
+        out: "sqlc"
