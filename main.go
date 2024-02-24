@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/hmcalister/AuthSSO/database"
 	mymiddleware "github.com/hmcalister/AuthSSO/middleware"
 	"github.com/hmcalister/AuthSSO/routes/api/apiv1"
 
@@ -15,8 +16,10 @@ import (
 )
 
 func init() {
-	debugFlag := flag.Bool("debug", false, "Flag for debug level with console log outputs")
+	var err error
 
+	debugFlag := flag.Bool("debug", false, "Flag for debug level with console log outputs")
+	databaseFilePath := flag.String("databaseFilePath", "database.sqlite", "The path to the database file on disk.")
 	flag.Parse()
 
 	logFileHandle := &lumberjack.Logger{
