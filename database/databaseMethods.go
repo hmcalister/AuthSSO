@@ -7,6 +7,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/hmcalister/AuthSSO/database/sqlc"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // go:embed schema.sql
