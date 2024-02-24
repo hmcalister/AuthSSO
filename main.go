@@ -46,6 +46,14 @@ func init() {
 		log.Logger = log.Output(multiWriter)
 	}
 
+	log.Debug().
+		Str("DatabaseFilePath", *databaseFilePath).
+		Msg("Creating Database")
+	databaseManager, err = database.NewDatabase(*databaseFilePath)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Error during creation of database manager")
+	}
+
 	log.Debug().Msg("End Init Func")
 }
 
