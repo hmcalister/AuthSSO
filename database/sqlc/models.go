@@ -2,13 +2,13 @@
 // versions:
 //   sqlc v1.25.0
 
-package database
+package sqlc
 
 import ()
 
 type AuthenticationDatum struct {
 	Uuid           string
-	Hashedpassword string
+	HashedPassword string
 	Salt           string
 }
 

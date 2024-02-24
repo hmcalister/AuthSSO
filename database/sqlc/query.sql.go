@@ -3,28 +3,31 @@
 //   sqlc v1.25.0
 // source: query.sql
 
-package database
+package sqlc
 
 import (
 	"context"
 )
 
 const createAuthenticationData = `-- name: CreateAuthenticationData :one
-INSERT INTO authenticationData(uuid, hashedPassword, salt)
+
+INSERT INTO authenticationData(uuid, hashed_password, salt)
 VALUES(?, ?, ?)
-RETURNING uuid, hashedpassword, salt
+RETURNING uuid, hashed_password, salt
 `
 
 type CreateAuthenticationDataParams struct {
 	Uuid           string
-	Hashedpassword string
+	HashedPassword string
 	Salt           string
 }
 
+// -----------------------------------------------------------------------------
+// CREATE QUERIES
 func (q *Queries) CreateAuthenticationData(ctx context.Context, arg CreateAuthenticationDataParams) (AuthenticationDatum, error) {
-	row := q.db.QueryRowContext(ctx, createAuthenticationData, arg.Uuid, arg.Hashedpassword, arg.Salt)
+	row := q.db.QueryRowContext(ctx, createAuthenticationData, arg.Uuid, arg.HashedPassword, arg.Salt)
 	var i AuthenticationDatum
-	err := row.Scan(&i.Uuid, &i.Hashedpassword, &i.Salt)
+	err := row.Scan(&i.Uuid, &i.HashedPassword, &i.Salt)
 	return i, err
 }
 
@@ -47,10 +50,13 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const deleteAuthData = `-- name: DeleteAuthData :exec
+
 DELETE FROM authenticationData
 WHERE uuid = ?
 `
 
+// -----------------------------------------------------------------------------
+// DELETE QUERIES
 func (q *Queries) DeleteAuthData(ctx context.Context, uuid string) error {
 	_, err := q.db.ExecContext(ctx, deleteAuthData, uuid)
 	return err
@@ -67,43 +73,61 @@ func (q *Queries) DeleteUser(ctx context.Context, uuid string) error {
 }
 
 const getAuthData = `-- name: GetAuthData :one
-SELECT uuid, hashedpassword, salt FROM authenticationData
+
+SELECT uuid, hashed_password, salt FROM authenticationData
 WHERE uuid = ? 
 LIMIT 1
 `
 
+// -----------------------------------------------------------------------------
+// RETRIEVAL QUERIES
 func (q *Queries) GetAuthData(ctx context.Context, uuid string) (AuthenticationDatum, error) {
 	row := q.db.QueryRowContext(ctx, getAuthData, uuid)
 	var i AuthenticationDatum
-	err := row.Scan(&i.Uuid, &i.Hashedpassword, &i.Salt)
+	err := row.Scan(&i.Uuid, &i.HashedPassword, &i.Salt)
 	return i, err
 }
 
-const getUser = `-- name: GetUser :one
+const getUserByUUID = `-- name: GetUserByUUID :one
 SELECT uuid, username FROM users
 WHERE uuid = ? LIMIT 1
 `
 
-func (q *Queries) GetUser(ctx context.Context, uuid string) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUser, uuid)
+func (q *Queries) GetUserByUUID(ctx context.Context, uuid string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByUUID, uuid)
+	var i User
+	err := row.Scan(&i.Uuid, &i.Username)
+	return i, err
+}
+
+const getUserByUsername = `-- name: GetUserByUsername :one
+SELECT uuid, username FROM users
+WHERE username = ? LIMIT 1
+`
+
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByUsername, username)
 	var i User
 	err := row.Scan(&i.Uuid, &i.Username)
 	return i, err
 }
 
 const updateAuthenticationData = `-- name: UpdateAuthenticationData :exec
+
 UPDATE authenticationData
-SET hashedPassword = ?, salt = ?
+SET hashed_password = ?, salt = ?
 WHERE uuid = ?
 `
 
 type UpdateAuthenticationDataParams struct {
-	Hashedpassword string
+	HashedPassword string
 	Salt           string
 	Uuid           string
 }
 
+// -----------------------------------------------------------------------------
+// UPDATE QUERIES
 func (q *Queries) UpdateAuthenticationData(ctx context.Context, arg UpdateAuthenticationDataParams) error {
-	_, err := q.db.ExecContext(ctx, updateAuthenticationData, arg.Hashedpassword, arg.Salt, arg.Uuid)
+	_, err := q.db.ExecContext(ctx, updateAuthenticationData, arg.HashedPassword, arg.Salt, arg.Uuid)
 	return err
 }
