@@ -14,14 +14,14 @@ import (
 // go:embed schema.sql
 var ddl string
 
-type Database struct {
+type DatabaseManager struct {
 	db      *sql.DB
 	queries *sqlc.Queries
 }
 
 // Creates a new database struct at the given filepath (erroring if not possible)
 // and creating the schema detailed by schema.sql and query.sql (if not already present)
-func NewDatabase(databaseFilePath string) (*Database, error) {
+func NewDatabase(databaseFilePath string) (*DatabaseManager, error) {
 	ctx := context.Background()
 
 	db, err := sql.Open("sqlite3", databaseFilePath)
@@ -36,7 +36,7 @@ func NewDatabase(databaseFilePath string) (*Database, error) {
 
 	queries := sqlc.New(db)
 
-	return &Database{
+	return &DatabaseManager{
 		db:      db,
 		queries: queries,
 	}, nil
@@ -51,7 +51,7 @@ func NewDatabase(databaseFilePath string) (*Database, error) {
 //
 // This method ensures that the new user data and auth data is create atomically, so
 // a user cannot exist without auth data, and auth data cannot exist without a user
-func (database *Database) RegisterNewUser(username string, password string) error {
+func (database *DatabaseManager) RegisterNewUser(username string, password string) error {
 	salt, err := generateSalt()
 	if err != nil {
 		return err
@@ -98,7 +98,7 @@ func (database *Database) RegisterNewUser(username string, password string) erro
 //
 // Fails and returns a non-nil error if:
 // - The username does not exist in the database
-func (database *Database) ValidateAuthenticationAttempt(username string, passwordAttempt string) (bool, error) {
+func (database *DatabaseManager) ValidateAuthenticationAttempt(username string, passwordAttempt string) (bool, error) {
 	ctx := context.Background()
 
 	userDatum, err := database.queries.GetUserByUsername(ctx, username)
