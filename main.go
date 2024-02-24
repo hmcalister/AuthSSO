@@ -15,6 +15,10 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+var (
+	databaseManager *database.DatabaseManager
+)
+
 func init() {
 	var err error
 
