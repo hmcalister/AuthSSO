@@ -3,7 +3,7 @@ EXEC_FILE := AuthSSO
 clean:
 	rm logs/*
 	rm $(EXEC_FILE)
-	rm database/database/*
+	rm database/sqlc/*
 
 sqlcGenerate:
 	cd database; sqlc generate
