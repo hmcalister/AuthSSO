@@ -1,5 +1,8 @@
+-------------------------------------------------------------------------------
+-- CREATE QUERIES
+
 -- name: CreateAuthenticationData :one
-INSERT INTO authenticationData(uuid, hashedPassword, salt)
+INSERT INTO authenticationData(uuid, hashed_password, salt)
 VALUES(?, ?, ?)
 RETURNING *;
 
@@ -8,19 +11,32 @@ INSERT INTO users (uuid, username)
 VALUES(?, ?)
 RETURNING *;
 
+-------------------------------------------------------------------------------
+-- RETRIEVAL QUERIES
+
 -- name: GetAuthData :one
 SELECT * FROM authenticationData
 WHERE uuid = ? 
 LIMIT 1;
 
--- name: GetUser :one
+-- name: GetUserByUUID :one
 SELECT * FROM users
 WHERE uuid = ? LIMIT 1;
 
+-- name: GetUserByUsername :one
+SELECT * FROM users
+WHERE username = ? LIMIT 1;
+
+-------------------------------------------------------------------------------
+-- UPDATE QUERIES
+
 -- name: UpdateAuthenticationData :exec
 UPDATE authenticationData
-SET hashedPassword = ?, salt = ?
+SET hashed_password = ?, salt = ?
 WHERE uuid = ?;
+
+-------------------------------------------------------------------------------
+-- DELETE QUERIES
 
 -- name: DeleteAuthData :exec
 DELETE FROM authenticationData
