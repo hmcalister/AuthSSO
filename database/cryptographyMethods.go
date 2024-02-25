@@ -30,5 +30,6 @@ func generateSalt() (string, error) {
 // Perform the hash of a (plaintext) password with salt.
 func calculateHash(password string, salt string) string {
 	hash := argon2.IDKey([]byte(password), []byte(salt), timeCost, memoryCost, threads, keyLen)
+
 	return string(hash)
 }
