@@ -43,6 +43,10 @@ func NewDatabase(databaseFilePath string) (*DatabaseManager, error) {
 	}, nil
 }
 
+func (database *DatabaseManager) CloseDatabase() error {
+	return database.db.Close()
+}
+
 // Given a username and password, attempt to register a new user
 //
 // Fails (and returns a non-nil error) if:
