@@ -58,6 +58,8 @@ func init() {
 }
 
 func main() {
+	defer databaseManager.CloseDatabase()
+
 	log.Debug().Msg("Start Main Func")
 
 	router := chi.NewRouter()
