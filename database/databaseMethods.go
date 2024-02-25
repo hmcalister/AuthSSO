@@ -30,8 +30,7 @@ func NewDatabase(databaseFilePath string) (*DatabaseManager, error) {
 	}
 
 	if _, err := db.ExecContext(ctx, ddl); err != nil {
-		// This statement creates the tables, although it will error if the tables already exist
-		// So we will not return an error, as it is okay for the tables to exist, such as on a restart!
+		return nil, err
 	}
 
 	queries := sqlc.New(db)
