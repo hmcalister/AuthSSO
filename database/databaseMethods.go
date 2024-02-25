@@ -56,7 +56,7 @@ func (database *DatabaseManager) CloseDatabase() error {
 //
 // This method ensures that the new user data and auth data is create atomically, so
 // a user cannot exist without auth data, and auth data cannot exist without a user
-func (database *DatabaseManager) RegisterNewUser(username string, password string) error {
+func (database *DatabaseManager) RegisterNewUser(ctx context.Context, username string, password string) error {
 	salt, err := generateSalt()
 	if err != nil {
 		return err
@@ -74,8 +74,6 @@ func (database *DatabaseManager) RegisterNewUser(username string, password strin
 		Uuid:     newUserUUID,
 		Username: username,
 	}
-
-	ctx := context.Background()
 
 	// Begin database transaction to ensure user and authdata created together
 	tx, err := database.db.Begin()
