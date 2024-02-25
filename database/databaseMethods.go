@@ -95,6 +95,40 @@ func (database *DatabaseManager) RegisterNewUser(ctx context.Context, username s
 	return tx.Commit()
 }
 
+// Delete a user from the database, including the authdata and user.
+//
+// Fails and returns a non-nil error if:
+// - The user does not exist in the database
+// - The transaction to delete both the user data and auth data fails
+func (database *DatabaseManager) DeleteUserByUsername(ctx context.Context, username string) error {
+	// Get the user by username, if it exists
+	userData, err := database.queries.GetUserByUsername(ctx, username)
+	if err != nil {
+		return err
+	}
+
+	userUUID := userData.Uuid
+
+	// Begin database transaction to ensure user and authdata deleted together
+	tx, err := database.db.Begin()
+	if err != nil {
+		return err
+	}
+	// If anything fails, an early return is triggered (before tx.Commit is called) and tx.Rollback is called
+	defer tx.Rollback()
+
+	qtx := database.queries.WithTx(tx)
+	err = qtx.DeleteUser(ctx, userUUID)
+	if err != nil {
+		return err
+	}
+	err = qtx.DeleteAuthData(ctx, userUUID)
+	if err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
 // Given a username and a password, validate the login attempt.
 // Returns true if the username is valid, and the password matches the expected hash.
 // Returns false otherwise.
