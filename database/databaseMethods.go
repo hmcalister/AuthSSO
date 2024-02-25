@@ -101,9 +101,7 @@ func (database *DatabaseManager) RegisterNewUser(ctx context.Context, username s
 //
 // Fails and returns a non-nil error if:
 // - The username does not exist in the database
-func (database *DatabaseManager) ValidateAuthenticationAttempt(username string, passwordAttempt string) (bool, error) {
-	ctx := context.Background()
-
+func (database *DatabaseManager) ValidateAuthenticationAttempt(ctx context.Context, username string, passwordAttempt string) (bool, error) {
 	userDatum, err := database.queries.GetUserByUsername(ctx, username)
 	if err != nil {
 		return false, err
