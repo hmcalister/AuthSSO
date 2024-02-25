@@ -8,10 +8,12 @@ import (
 	"github.com/google/uuid"
 	"github.com/hmcalister/AuthSSO/database/sqlc"
 
+	_ "embed"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// go:embed schema.sql
+//go:embed schema.sql
 var ddl string
 
 type DatabaseManager struct {
