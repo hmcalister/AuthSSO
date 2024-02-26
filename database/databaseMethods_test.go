@@ -93,3 +93,36 @@ func TestValidateAuthenticationAttempt(t *testing.T) {
 		t.Errorf("Authentication attempt succeeded (when presented with incorrect credentials)")
 	}
 }
+
+func TestSequentialDatabaseAccess(t *testing.T) {
+	numUsers := 256
+
+	password := "Password123"
+	ctx := context.Background()
+	for i := 0; i < numUsers; i += 1 {
+		username := fmt.Sprintf("User%v", i)
+
+		err := databaseManager.RegisterNewUser(ctx, username, password)
+		if err != nil {
+			t.Errorf("Failed to register user %v: %v", i, err)
+		}
+	}
+	for i := 0; i < numUsers; i += 1 {
+		username := fmt.Sprintf("User%v", i)
+		ok, err := databaseManager.ValidateAuthenticationAttempt(ctx, username, password)
+		if err != nil {
+			t.Errorf("Error during authentication of user %v: %v", i, err)
+		}
+		if !ok {
+			t.Errorf("Failed to authenticate user %v (with correct credentials)", i)
+		}
+	}
+	for i := 0; i < numUsers; i += 1 {
+		username := fmt.Sprintf("User%v", i)
+		err := databaseManager.DeleteUserByUsername(ctx, username)
+		if err != nil {
+			t.Errorf("Failed to delete user %v: %v", i, err)
+		}
+	}
+}
+
