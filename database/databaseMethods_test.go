@@ -2,7 +2,10 @@ package database_test
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"os"
+	"sync"
 	"testing"
 
 	"github.com/hmcalister/AuthSSO/database"
@@ -34,7 +37,7 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalf("encountered error while closing database %v", err)
 	}
-	// os.Remove(testDatabasePath)
+	os.Remove(testDatabasePath)
 }
 
 func TestRegisterNewUser(t *testing.T) {
