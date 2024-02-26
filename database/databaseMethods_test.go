@@ -128,7 +128,7 @@ func TestSequentialDatabaseAccess(t *testing.T) {
 
 func TestParallelDatabaseAccess(t *testing.T) {
 	numUsers := 1024
-	numWorkers := 10
+	numWorkers := 8
 
 	var wg sync.WaitGroup
 	workerContext, workerCancel := context.WithCancel(context.Background())
@@ -159,11 +159,11 @@ func TestParallelDatabaseAccess(t *testing.T) {
 						workerCancel()
 					}
 
-					// err = databaseManager.DeleteUserByUsername(ctx, username)
-					// if err != nil {
-					// 	errorChan <- err
-					// 	workerCancel()
-					// }
+					err = databaseManager.DeleteUserByUsername(ctx, username)
+					if err != nil {
+						errorChan <- err
+						workerCancel()
+					}
 				}
 			}
 		}()
