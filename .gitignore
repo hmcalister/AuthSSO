@@ -1,3 +1,5 @@
 AuthSSO
 logs/*
 *.sqlite
+*.sqlite-shm
+*.sqlite-wal
