@@ -126,3 +126,62 @@ func TestSequentialDatabaseAccess(t *testing.T) {
 	}
 }
 
+func TestParallelDatabaseAccess(t *testing.T) {
+	numUsers := 1024
+	numWorkers := 10
+
+	var wg sync.WaitGroup
+	workerContext, workerCancel := context.WithCancel(context.Background())
+	errorChan := make(chan error)
+	userChan := make(chan int)
+
+	for i := 0; i < numWorkers; i += 1 {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			ctx := context.Background()
+			for {
+				select {
+				case <-workerContext.Done():
+					return
+				case i := <-userChan:
+					username := fmt.Sprintf("user%v", i)
+					err := databaseManager.RegisterNewUser(ctx, username, "Password123")
+					if err != nil {
+						errorChan <- err
+						workerCancel()
+					}
+
+					_, err = databaseManager.ValidateAuthenticationAttempt(ctx, username, "Password123")
+					if err != nil {
+						errorChan <- err
+						workerCancel()
+					}
+
+					// err = databaseManager.DeleteUserByUsername(ctx, username)
+					// if err != nil {
+					// 	errorChan <- err
+					// 	workerCancel()
+					// }
+				}
+			}
+		}()
+	}
+
+	go func() {
+		wg.Wait()
+		close(errorChan)
+	}()
+
+	go func() {
+		for i := 0; i < numUsers; i += 1 {
+			userChan <- i
+		}
+		workerCancel()
+	}()
+
+	for err := range errorChan {
+		t.Errorf("Failed to interact with database in a parallel fashion: %v", err)
+	}
+}
