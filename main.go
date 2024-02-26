@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"net/http"
 	"os"
 
@@ -17,11 +18,13 @@ import (
 
 var (
 	databaseManager *database.DatabaseManager
+	port            *int
 )
 
 func init() {
 	var err error
 
+	port = flag.Int("port", 6585, "The port to use for the HTTP server")
 	debugFlag := flag.Bool("debug", false, "Flag for debug level with console log outputs")
 	databaseFilePath := flag.String("databaseFilePath", "database.sqlite", "The path to the database file on disk.")
 	flag.Parse()
@@ -69,5 +72,10 @@ func main() {
 	apiV1Router := apiv1.NewApiRouter()
 	router.Mount("/api/v1", apiV1Router.Router())
 
-	http.ListenAndServe(":3000", router)
+	targetBindAddress := fmt.Sprintf("localhost:%v", *port)
+	log.Info().Msgf("Starting server on %v", targetBindAddress)
+	err := http.ListenAndServe(targetBindAddress, router)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Error during http listen and serve")
+	}
 }
