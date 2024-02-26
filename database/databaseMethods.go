@@ -31,6 +31,11 @@ func NewDatabase(databaseFilePath string) (*DatabaseManager, error) {
 		return nil, err
 	}
 
+	// Massively improves parallelism
+	if _, err := db.ExecContext(ctx, "PRAGMA journal_mode=WAL"); err != nil {
+		return nil, err
+	}
+
 	if _, err := db.ExecContext(ctx, ddl); err != nil {
 		return nil, err
 	}
