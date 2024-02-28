@@ -12,8 +12,8 @@ func private(w http.ResponseWriter, r *http.Request) {
 	_, claims, err := jwtauth.FromContext(r.Context())
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse JWT!")
-		w.Write([]byte("An error occurred during authentication. Please try again."))
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("An error occurred during authentication. Please try again."))
 		return
 	}
 
