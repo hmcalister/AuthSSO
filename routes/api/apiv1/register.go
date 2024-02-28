@@ -2,6 +2,7 @@ package apiv1
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -10,31 +11,30 @@ import (
 )
 
 func (api *ApiHandler) register(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+	var user userJsonData
+	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		log.Error().Err(err).Msg("Found error parsing form during register")
+		log.Error().Err(err).Msg("Found error parsing request during register")
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Could not parse form!"))
 		return
 	}
 
-	username := r.Form.Get("username")
-	if username == "" {
+	if user.Username == "" {
 		log.Info().Msg("Request did not include 'username' field!")
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Request must include 'username' field!"))
 		return
 	}
 
-	password := r.Form.Get("password")
-	if password == "" {
+	if user.Password == "" {
 		log.Info().Msg("Request did not include 'password' field!")
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Request must include 'password' field!"))
 		return
 	}
-	if len(password) > passwordMaxLen {
-		log.Info().Int("PasswordLen", len(password)).Msg("Password is too long! ")
+	if len(user.Password) > passwordMaxLen {
+		log.Info().Int("PasswordLen", len(user.Password)).Msg("Password is too long! ")
 		w.WriteHeader(http.StatusRequestEntityTooLarge)
 		w.Write([]byte(fmt.Sprintf("Password must be less than %v characters long!", passwordMaxLen)))
 		return
@@ -42,9 +42,9 @@ func (api *ApiHandler) register(w http.ResponseWriter, r *http.Request) {
 
 	ctx := context.Background()
 
-	err = api.databaseConnection.RegisterNewUser(ctx, username, password)
+	err = api.databaseConnection.RegisterNewUser(ctx, user.Username, user.Password)
 	if err == database.ErrOnCreateUserExists {
-		log.Info().Str("Username", username).Msg("User already exists")
+		log.Info().Str("Username", user.Username).Msg("User already exists")
 		w.WriteHeader(http.StatusConflict)
 		w.Write([]byte("Username already exists!"))
 		return
