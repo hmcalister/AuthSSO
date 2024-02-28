@@ -32,7 +32,8 @@ func NewApiRouter(db *database.DatabaseManager, tokenSecretKey []byte) *ApiHandl
 	}
 
 	apiRouterData.apiRouter.Get("/heartbeat", heartbeat)
-	apiRouterData.apiRouter.Get("/register", apiRouterData.register)
+	apiRouterData.apiRouter.Post("/register", apiRouterData.register)
+	apiRouterData.apiRouter.Post("/login", apiRouterData.login)
 
 	return apiRouterData
 }
