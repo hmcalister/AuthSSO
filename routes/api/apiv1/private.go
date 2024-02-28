@@ -17,5 +17,6 @@ func private(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("Private Route, Welcome User %v\n", claims["Subject"])))
+	log.Info().Interface("Claims", claims).Send()
+	w.Write([]byte(fmt.Sprintf("Private Route, Welcome User %v\n", claims["sub"])))
 }
