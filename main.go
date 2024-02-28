@@ -19,14 +19,16 @@ import (
 var (
 	databaseManager *database.DatabaseManager
 	port            *int
+	secretKey       []byte
 )
 
 func init() {
 	var err error
 
-	port = flag.Int("port", 6585, "The port to use for the HTTP server")
-	debugFlag := flag.Bool("debug", false, "Flag for debug level with console log outputs")
+	port = flag.Int("port", 6585, "The port to use for the HTTP server.")
+	debugFlag := flag.Bool("debug", false, "Flag for debug level with console log outputs.")
 	databaseFilePath := flag.String("databaseFilePath", "database.sqlite", "The path to the database file on disk.")
+	secretKeyFile := flag.String("secretKeyFile", "key.secret", "The path to the file containing the secret key for JWTAuth.")
 	flag.Parse()
 
 	logFileHandle := &lumberjack.Logger{
