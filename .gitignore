@@ -3,3 +3,5 @@ logs/*
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
+
+key.secret
