@@ -35,5 +35,12 @@ func NewApiRouter(db *database.DatabaseManager, tokenSecretKey []byte) *ApiHandl
 	apiRouterData.apiRouter.Post("/register", apiRouterData.register)
 	apiRouterData.apiRouter.Post("/login", apiRouterData.login)
 
+	apiRouterData.apiRouter.Group(func(r chi.Router) {
+		r.Use(jwtauth.Verifier(tokenAuth))
+		r.Use(jwtauth.Authenticator(tokenAuth))
+
+		r.Get("/private", private)
+	})
+
 	return apiRouterData
 }
