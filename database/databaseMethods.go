@@ -53,6 +53,16 @@ func (database *DatabaseManager) CloseDatabase() error {
 	return database.db.Close()
 }
 
+// Checks if a user exists in the database. Returns true if the user exists already.
+func (database *DatabaseManager) CheckUserExists(ctx context.Context, username string) (bool, error) {
+	user, err := database.queries.GetUserByUsername(ctx, username)
+	if err != nil {
+		return false, err
+	}
+
+	return user.Username == "", nil
+}
+
 // Given a username and password, attempt to register a new user
 //
 // Fails (and returns a non-nil error) if:
