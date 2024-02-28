@@ -11,8 +11,10 @@ const (
 )
 
 type ApiHandler struct {
-	apiRouter *chi.Mux
-	// databaseConn
+	apiRouter          *chi.Mux
+	databaseConnection *database.DatabaseManager
+	tokenSecretKey     []byte
+	tokenAuth          *jwtauth.JWTAuth
 }
 
 func (api *ApiHandler) Router() *chi.Mux {
