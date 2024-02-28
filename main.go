@@ -59,6 +59,11 @@ func init() {
 		log.Fatal().Err(err).Msg("Error during creation of database manager")
 	}
 
+	secretKey, err = os.ReadFile(*secretKeyFile)
+	if err != nil {
+		log.Fatal().Str("FilePath", *secretKeyFile).Err(err).Msg("Could not open secret file for JWTAuth")
+	}
+
 	log.Debug().Msg("End Init Func")
 }
 
