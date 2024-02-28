@@ -2,6 +2,12 @@ package apiv1
 
 import (
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/jwtauth/v5"
+	"github.com/hmcalister/AuthSSO/database"
+)
+
+const (
+	passwordMaxLen = 1024
 )
 
 type ApiHandler struct {
