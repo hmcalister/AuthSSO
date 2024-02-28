@@ -118,6 +118,9 @@ func (database *DatabaseManager) DeleteUserByUsername(ctx context.Context, usern
 	// Get the user by username, if it exists
 	userData, err := database.queries.GetUserByUsername(ctx, username)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return ErrOnFetchUserDoesNotExist
+		}
 		return err
 	}
 
@@ -152,6 +155,9 @@ func (database *DatabaseManager) DeleteUserByUsername(ctx context.Context, usern
 func (database *DatabaseManager) ValidateAuthenticationAttempt(ctx context.Context, username string, passwordAttempt string) (bool, error) {
 	userDatum, err := database.queries.GetUserByUsername(ctx, username)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, ErrOnFetchUserDoesNotExist
+		}
 		return false, err
 	}
 	authDatum, err := database.queries.GetAuthData(ctx, userDatum.Uuid)
