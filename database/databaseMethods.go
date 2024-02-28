@@ -10,6 +10,7 @@ import (
 
 	_ "embed"
 
+	"github.com/mattn/go-sqlite3"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -56,7 +57,7 @@ func (database *DatabaseManager) CloseDatabase() error {
 //
 // Fails (and returns a non-nil error) if:
 // - The salt fails to be generated
-// - The username already exists in the database
+// - The username already exists in the database (ErrUserExists)
 // - The transaction to store both the new user data and the new auth data fails
 //
 // This method ensures that the new user data and auth data is create atomically, so
@@ -94,6 +95,14 @@ func (database *DatabaseManager) RegisterNewUser(ctx context.Context, username s
 		return err
 	}
 	_, err = qtx.CreateUser(ctx, newUserDatum)
+
+	if sqliteErr, ok := err.(sqlite3.Error); ok {
+		switch errCode := sqliteErr.ExtendedCode; errCode {
+		case sqlite3.ErrConstraintUnique:
+			return ErrOnCreateUserExists
+		}
+	}
+
 	if err != nil {
 		return err
 	}
