@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
+	authenticationmaster "github.com/hmcalister/AuthSSO/authenticationMaster"
 	"github.com/hmcalister/AuthSSO/database"
-	"github.com/hmcalister/AuthSSO/routes/api"
 	commonMiddleware "github.com/hmcalister/GoChi-CommonMiddleware"
 
 	"github.com/rs/zerolog"
@@ -76,8 +76,18 @@ func main() {
 	router.Use(commonMiddleware.ZerologLogger)
 	router.Use(commonMiddleware.RecoverWithInternalServerError)
 
-	apiRouter := api.NewApiRouter(databaseManager, secretKey)
-	router.Mount("/api", apiRouter.Router())
+	authMaster := authenticationmaster.NewAuthenticationMaster(databaseManager, secretKey)
+	router.Post("/api/register", authMaster.Register)
+	router.Post("/api/login", authMaster.Login)
+
+	// --------------------------------------------------------------------------------
+	// Example authenticated route
+	// --------------------------------------------------------------------------------
+	// router.Group(func(r chi.Router) {
+	// 	r.Use(jwtauth.Verifier(tokenAuth))
+	// 	r.Use(jwtauth.Authenticator(tokenAuth))
+	// 	r.Get("/private", ...)
+	// })
 
 	targetBindAddress := fmt.Sprintf("localhost:%v", *port)
 	log.Info().Msgf("Starting server on %v", targetBindAddress)
