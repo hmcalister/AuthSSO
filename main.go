@@ -8,8 +8,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/hmcalister/AuthSSO/database"
-	mymiddleware "github.com/hmcalister/AuthSSO/middleware"
-	"github.com/hmcalister/AuthSSO/routes/api/apiv1"
+	"github.com/hmcalister/AuthSSO/routes/api"
+	commonMiddleware "github.com/hmcalister/GoChi-CommonMiddleware"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -73,8 +73,8 @@ func main() {
 	log.Debug().Msg("Start Main Func")
 
 	router := chi.NewRouter()
-	router.Use(mymiddleware.ZerologLogger)
-	router.Use(mymiddleware.RecoverWithInternalServerError)
+	router.Use(commonMiddleware.ZerologLogger)
+	router.Use(commonMiddleware.RecoverWithInternalServerError)
 
 	apiV1Router := apiv1.NewApiRouter(databaseManager, secretKey)
 	router.Mount("/api/v1", apiV1Router.Router())
