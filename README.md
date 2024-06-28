@@ -7,8 +7,8 @@ This project is an implementation of a single-sign-on system, where a single HTT
 ## TODO
 
 - API versioning
-
 - Secret key rotation
+- Refresh JWT
 
 ## Technologies Used
 
