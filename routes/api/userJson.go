@@ -1,4 +1,4 @@
-package apiv1
+package api
 
 type userJsonData struct {
 	Username string `json:"username"`

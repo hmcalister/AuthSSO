@@ -1,9 +1,10 @@
-package apiv1
+package api
 
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/hmcalister/AuthSSO/database"
+	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
 const (
@@ -22,7 +23,10 @@ func (api *ApiHandler) Router() *chi.Mux {
 }
 
 func NewApiRouter(db *database.DatabaseManager, tokenSecretKey []byte) *ApiHandler {
-	tokenAuth := jwtauth.New(tokenSigningMethod.Alg(), tokenSecretKey, nil)
+	tokenAuth := jwtauth.New(tokenSigningMethod.Alg(), tokenSecretKey,
+		jwt.WithIssuer(issuerString),
+		jwt.WithRequiredClaim(jwt.SubjectKey),
+	)
 
 	apiRouterData := &ApiHandler{
 		apiRouter:          chi.NewRouter(),
@@ -31,7 +35,6 @@ func NewApiRouter(db *database.DatabaseManager, tokenSecretKey []byte) *ApiHandl
 		tokenAuth:          tokenAuth,
 	}
 
-	apiRouterData.apiRouter.Get("/heartbeat", heartbeat)
 	apiRouterData.apiRouter.Post("/register", apiRouterData.register)
 	apiRouterData.apiRouter.Post("/login", apiRouterData.login)
 

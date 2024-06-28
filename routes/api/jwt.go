@@ -1,4 +1,4 @@
-package apiv1
+package api
 
 import (
 	"time"
@@ -7,20 +7,22 @@ import (
 )
 
 const (
-	expirationDuration time.Duration = 1 * time.Hour
+	tokenExpirationDuration time.Duration = 6 * time.Hour
 )
 
 var (
+	issuerString       string            = "hmcalisterAuthSSO"
 	tokenSigningMethod jwt.SigningMethod = jwt.SigningMethodHS256
 )
 
 func (api *ApiHandler) generateJWT(username string) (string, error) {
 	currentTime := time.Now()
-	expirationTime := currentTime.Add(expirationDuration)
+	expirationTime := currentTime.Add(tokenExpirationDuration)
 
 	token := jwt.NewWithClaims(
 		jwt.SigningMethodHS256,
 		jwt.RegisteredClaims{
+			Issuer:    issuerString,
 			IssuedAt:  jwt.NewNumericDate(currentTime),
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			Subject:   username,
