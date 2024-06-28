@@ -76,8 +76,8 @@ func main() {
 	router.Use(commonMiddleware.ZerologLogger)
 	router.Use(commonMiddleware.RecoverWithInternalServerError)
 
-	apiV1Router := apiv1.NewApiRouter(databaseManager, secretKey)
-	router.Mount("/api/v1", apiV1Router.Router())
+	apiRouter := api.NewApiRouter(databaseManager, secretKey)
+	router.Mount("/api", apiRouter.Router())
 
 	targetBindAddress := fmt.Sprintf("localhost:%v", *port)
 	log.Info().Msgf("Starting server on %v", targetBindAddress)
