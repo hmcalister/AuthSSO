@@ -23,4 +23,18 @@ func (authMaster *AuthenticationMaster) AuthenticateRequest(w http.ResponseWrite
 		return
 	}
 
+	if err != nil {
+		switch err {
+		case jwtauth.ErrExpired:
+			w.Write([]byte("Token is expired."))
+		case jwtauth.ErrIATInvalid:
+			w.Write([]byte("Token issued time invalid."))
+		case jwtauth.ErrNBFInvalid:
+			w.Write([]byte("Token not yet valid."))
+		default:
+			w.Write([]byte("Token unauthorized."))
+		}
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 }
