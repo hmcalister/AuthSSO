@@ -77,7 +77,7 @@ func TestDeleteExistingUser(t *testing.T) {
 func TestValidateAuthenticationAttempt(t *testing.T) {
 	ctx := context.Background()
 
-	valid, err := databaseManager.ValidateAuthenticationAttempt(ctx, "John Smith", "Password123")
+	valid, err := databaseManager.ValidateLoginAttempt(ctx, "John Smith", "Password123")
 	if err != nil {
 		t.Errorf("Error while authenticating (with correct credentials): %v", err)
 	}
@@ -85,7 +85,7 @@ func TestValidateAuthenticationAttempt(t *testing.T) {
 		t.Errorf("Authentication attempt failed (when presented with correct credentials)")
 	}
 
-	valid, err = databaseManager.ValidateAuthenticationAttempt(ctx, "John Smith", "IncorrectPassword")
+	valid, err = databaseManager.ValidateLoginAttempt(ctx, "John Smith", "IncorrectPassword")
 	if err != nil {
 		t.Errorf("Error while authenticating (with incorrect credentials): %v", err)
 	}
@@ -109,7 +109,7 @@ func TestSequentialDatabaseAccess(t *testing.T) {
 	}
 	for i := 0; i < numUsers; i += 1 {
 		username := fmt.Sprintf("User%v", i)
-		ok, err := databaseManager.ValidateAuthenticationAttempt(ctx, username, password)
+		ok, err := databaseManager.ValidateLoginAttempt(ctx, username, password)
 		if err != nil {
 			t.Errorf("Error during authentication of user %v: %v", i, err)
 		}
@@ -153,7 +153,7 @@ func TestParallelDatabaseAccess(t *testing.T) {
 						workerCancel()
 					}
 
-					_, err = databaseManager.ValidateAuthenticationAttempt(ctx, username, "Password123")
+					_, err = databaseManager.ValidateLoginAttempt(ctx, username, "Password123")
 					if err != nil {
 						errorChan <- err
 						workerCancel()

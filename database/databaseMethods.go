@@ -162,7 +162,7 @@ func (database *DatabaseManager) DeleteUserByUsername(ctx context.Context, usern
 //
 // Fails and returns a non-nil error if:
 // - The username does not exist in the database
-func (database *DatabaseManager) ValidateAuthenticationAttempt(ctx context.Context, username string, passwordAttempt string) (bool, error) {
+func (database *DatabaseManager) ValidateLoginAttempt(ctx context.Context, username string, passwordAttempt string) (bool, error) {
 	userDatum, err := database.queries.GetUserByUsername(ctx, username)
 	if err != nil {
 		if err == sql.ErrNoRows {
