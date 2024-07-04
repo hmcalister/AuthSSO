@@ -17,4 +17,10 @@ type authorizedUserData struct {
 func (authMaster *AuthenticationMaster) AuthenticateRequest(w http.ResponseWriter, r *http.Request) {
 	token, err := jwtauth.VerifyRequest(authMaster.tokenAuth, r, jwtauth.TokenFromHeader, jwtauth.TokenFromCookie)
 
+	if token == nil {
+		log.Debug().Msg("No token received.")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 }
