@@ -79,6 +79,7 @@ func main() {
 	authMaster := authenticationmaster.NewAuthenticationMaster(databaseManager, secretKey)
 	router.Post("/api/register", authMaster.Register)
 	router.Post("/api/login", authMaster.Login)
+	router.Post("/api/authenticate", authMaster.AuthenticateRequest)
 
 	// --------------------------------------------------------------------------------
 	// Example authenticated route
