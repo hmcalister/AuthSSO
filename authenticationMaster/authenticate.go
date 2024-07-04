@@ -14,6 +14,10 @@ type authorizedUserData struct {
 	Username string
 }
 
+// Authenticate a request by checking the JWT in the request header (or cookie).
+//
+// Note this effectively reimplements the logic of the go-chi jwtauth Verifier middleware,
+// but exposes the logic on a route rather than as middleware. https://pkg.go.dev/github.com/go-chi/jwtauth/v5@v5.3.0#Verifier
 func (authMaster *AuthenticationMaster) AuthenticateRequest(w http.ResponseWriter, r *http.Request) {
 	token, err := jwtauth.VerifyRequest(authMaster.tokenAuth, r, jwtauth.TokenFromHeader, jwtauth.TokenFromCookie)
 
@@ -23,6 +27,11 @@ func (authMaster *AuthenticationMaster) AuthenticateRequest(w http.ResponseWrite
 		return
 	}
 
+	// The possible error return types are actually fairly limited,
+	// based on the source code of VerifyToken and ErrorReason
+	//
+	// https://pkg.go.dev/github.com/go-chi/jwtauth/v5@v5.3.0#VerifyToken
+	// https://pkg.go.dev/github.com/go-chi/jwtauth/v5@v5.3.0#ErrorReason
 	if err != nil {
 		switch err {
 		case jwtauth.ErrExpired:
