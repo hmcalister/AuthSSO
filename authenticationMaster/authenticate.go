@@ -14,3 +14,7 @@ type authorizedUserData struct {
 	Username string
 }
 
+func (authMaster *AuthenticationMaster) AuthenticateRequest(w http.ResponseWriter, r *http.Request) {
+	token, err := jwtauth.VerifyRequest(authMaster.tokenAuth, r, jwtauth.TokenFromHeader, jwtauth.TokenFromCookie)
+
+}
