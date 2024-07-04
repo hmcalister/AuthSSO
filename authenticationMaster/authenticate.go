@@ -50,4 +50,11 @@ func (authMaster *AuthenticationMaster) AuthenticateRequest(w http.ResponseWrite
 		return
 	}
 
+	// Send the result as the response
+	userData := authorizedUserData{
+		UserID:   userID,
+		Username: username,
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(userData)
 }
