@@ -37,4 +37,17 @@ func (authMaster *AuthenticationMaster) AuthenticateRequest(w http.ResponseWrite
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
+
+	// Extract the UserID from the token
+	userID := token.Subject()
+
+	// Query the database and get the username from it
+	ctx := context.Background()
+	username, err := authMaster.databaseConnection.GetUsernameByUserID(ctx, userID)
+	if err != nil {
+		log.Error().Err(err).Msg("UserID does not exist in database.")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 }
