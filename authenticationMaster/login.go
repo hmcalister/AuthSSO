@@ -51,7 +51,7 @@ func (authMaster *AuthenticationMaster) Login(w http.ResponseWriter, r *http.Req
 	databaseQueryContext, databaseQueryContextCancel := context.WithTimeout(context.Background(), maximumDatabaseQueryDuration)
 	defer databaseQueryContextCancel()
 
-	ok, err := authMaster.databaseConnection.ValidateAuthenticationAttempt(databaseQueryContext, requestCredentials.Username, requestCredentials.Password)
+	ok, err := authMaster.databaseConnection.ValidateLoginAttempt(databaseQueryContext, requestCredentials.Username, requestCredentials.Password)
 	if databaseQueryContext.Err() == context.DeadlineExceeded {
 		log.Info().Str("Username", requestCredentials.Username).Msg("Database query duration exceeded!")
 		w.WriteHeader(http.StatusInternalServerError)
