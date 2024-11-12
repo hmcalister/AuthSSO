@@ -81,15 +81,6 @@ func main() {
 	router.Post("/api/login", authMaster.Login)
 	router.Get("/api/authenticate", authMaster.AuthenticateRequest)
 
-	// --------------------------------------------------------------------------------
-	// Example authenticated route
-	// --------------------------------------------------------------------------------
-	// router.Group(func(r chi.Router) {
-	// 	r.Use(jwtauth.Verifier(tokenAuth))
-	// 	r.Use(jwtauth.Authenticator(tokenAuth))
-	// 	r.Get("/private", ...)
-	// })
-
 	targetBindAddress := fmt.Sprintf("localhost:%v", *port)
 	log.Info().Msgf("Starting server on %v", targetBindAddress)
 	err := http.ListenAndServe(targetBindAddress, router)
