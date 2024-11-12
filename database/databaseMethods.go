@@ -73,6 +73,16 @@ func (database *DatabaseManager) GetUsernameByUserID(ctx context.Context, userID
 	return user.Username, nil
 }
 
+// Gets the userID of a user specified by the username. Returns an error if the username does not exist.
+func (database *DatabaseManager) GetUserIDByUsername(ctx context.Context, username string) (string, error) {
+	user, err := database.queries.GetUserByUsername(ctx, username)
+	if err != nil {
+		return "", err
+	}
+
+	return user.Uuid, nil
+}
+
 // Given a username and password, attempt to register a new user
 //
 // Fails (and returns a non-nil error) if:

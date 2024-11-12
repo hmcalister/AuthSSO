@@ -35,7 +35,9 @@ type AuthenticationMaster struct {
 func NewAuthenticationMaster(db *database.DatabaseManager, tokenSecretKey []byte) *AuthenticationMaster {
 	// Tokens must be signed using the secret key, be signed with the correct signing method.
 	// Tokens must also be issued by this server, and have a subject claim (the subject is the UserID).
-	tokenAuth := jwtauth.New(tokenSigningMethod.Alg(), tokenSecretKey,
+	tokenAuth := jwtauth.New(tokenSigningMethod.Alg(),
+		tokenSecretKey,
+		tokenSecretKey,
 		jwt.WithIssuer(issuerString),
 		jwt.WithRequiredClaim(jwt.SubjectKey),
 	)
