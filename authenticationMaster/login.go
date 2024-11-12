@@ -81,7 +81,8 @@ func (authMaster *AuthenticationMaster) Login(w http.ResponseWriter, r *http.Req
 
 	// Now we can go about giving the JWT to authenticate in the future
 
-	token, err := authMaster.generateJWT(requestCredentials.Username)
+	userID, _ := authMaster.databaseConnection.GetUserIDByUsername(context.Background(), requestCredentials.Username)
+	token, err := authMaster.generateJWT(userID)
 	if err != nil {
 		log.Error().Err(err).Str("Username", requestCredentials.Username).Msg("Error during creation of JWT!")
 		w.WriteHeader(http.StatusInternalServerError)
