@@ -61,7 +61,7 @@ func (authMaster *AuthenticationMaster) Login(w http.ResponseWriter, r *http.Req
 	if err == database.ErrOnFetchUserDoesNotExist {
 		slog.Info("Login Request for Invalid Username", "Username", requestCredentials.Username)
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No user with given username exists!"))
+		w.Write([]byte("Invalid Username or Password."))
 		return
 	}
 	if err != nil {
