@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hmcalister AuthSSO Register</title>
+    <link rel="stylesheet" href="pico.purple.min.css">
+    <script defer type="text/javascript" src="register.js"></script>
+</head>
+
+<body>
+
+    <main class="container">
+        <article class="grid">
+            <section>
+                <hgroup>
+                    <h1>Register</h1>
+                    <p>Create a new account to get started.</p>
+                </hgroup>
+
+                <form id="registerForm">
+                    <label for="username">Username</label>
+                    <input type="text" id="Username" name="Username" placeholder="Choose a username" required>
+
+                    <label for="password">Password</label>
+                    <input type="password" id="Password" name="Password" placeholder="Create a password" required>
+
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password"
+                        placeholder="Confirm your password" required>
+
+                    <article id="errorMessage" style="text-align:center; color: var(--pico-primary); display: none;"></article>
+
+                    <button type="submit" class="contrast">Register</button>
+                </form>
+
+                <footer>
+                    <small>Already have an account? <a href="/login.html" style="border-radius: 0.5em; background-color: var(--pico-primary-background); color: var(--pico-contrast); text-decoration: none; padding: 0.2em;">Log in</a></small>
+                </footer>
+            </section>
+        </article>
+    </main>
+</body>
+
+</html>
