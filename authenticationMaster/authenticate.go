@@ -3,10 +3,10 @@ package authenticationmaster
 import (
 	"context"
 	"encoding/json"
+	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/jwtauth/v5"
-	"github.com/rs/zerolog/log"
 )
 
 type authorizedUserData struct {
@@ -22,7 +22,7 @@ func (authMaster *AuthenticationMaster) AuthenticateRequest(w http.ResponseWrite
 	token, err := jwtauth.VerifyRequest(authMaster.tokenAuth, r, jwtauth.TokenFromHeader, jwtauth.TokenFromCookie)
 
 	if token == nil {
-		log.Debug().Msg("No token received.")
+		slog.Debug("No token received.")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -54,7 +54,7 @@ func (authMaster *AuthenticationMaster) AuthenticateRequest(w http.ResponseWrite
 	ctx := context.Background()
 	username, err := authMaster.databaseConnection.GetUsernameByUserID(ctx, userID)
 	if err != nil {
-		log.Error().Err(err).Msg("UserID does not exist in database.")
+		slog.Error("UserID does not exist in database", "Error", err)
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
