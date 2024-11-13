@@ -1,6 +1,4 @@
-document.getElementById("loginForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-
+async function loginRequest() {
     const username = document.getElementById("Username").value;
     const password = document.getElementById("Password").value;
     const errorMessageElement = document.getElementById("errorMessage");
@@ -11,24 +9,24 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
         Password: password
     };
 
-    fetch('/api/login', {
+    const response = await fetch('/api/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(loginData)
     })
-    .then((response) => {
-        if (response.status == 200) {
-            window.location.href = '/success.html';
-        } else {
-            errorMessageElement.style.display = "block";
-            return response.text()
-        }
-    })
-    .then((errorMessage) => {
-        console.log(errorMessage);
-        errorMessageElement.innerHTML = errorMessage;
-    })
-    .catch(error => console.error('Error:', error));
+    const responseText = await response.text()
+    if (response.status == 200) {
+        localStorage.setItem('token', responseText);
+        window.location.href = '/authenticated.html';
+    } else {
+        errorMessageElement.style.display = "block";
+        errorMessageElement.innerHTML = responseText;
+    }
+}
+
+document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    loginRequest();
 });
