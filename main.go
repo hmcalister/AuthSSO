@@ -1,8 +1,10 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"fmt"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
@@ -15,6 +17,9 @@ import (
 
 	"gopkg.in/natefinch/lumberjack.v2"
 )
+
+//go:embed all:web
+var webpages embed.FS
 
 var (
 	databaseManager *database.DatabaseManager
@@ -41,8 +46,7 @@ func init() {
 	var slogHandler slog.Handler
 	if *debugFlag {
 		slogHandler = console.NewHandler(os.Stdout, &console.HandlerOptions{
-			AddSource: true,
-			Level:     slog.LevelDebug,
+			Level: slog.LevelDebug,
 		})
 	} else {
 		slogHandler = slog.NewJSONHandler(logFileHandle, &slog.HandlerOptions{
@@ -80,6 +84,11 @@ func main() {
 	router.Post("/api/register", authMaster.Register)
 	router.Post("/api/login", authMaster.Login)
 	router.Get("/api/authenticate", authMaster.AuthenticateRequest)
+
+	content, _ := fs.Sub(webpages, "web")
+	fs := http.FS(content)
+	fileServer := http.FileServer(fs)
+	router.Mount("/", fileServer)
 
 	targetBindAddress := fmt.Sprintf("localhost:%v", *port)
 	slog.Info("Starting server", "Address", targetBindAddress)
