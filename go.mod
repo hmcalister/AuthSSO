@@ -7,6 +7,7 @@ require (
 	github.com/go-chi/jwtauth/v5 v5.3.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/uuid v1.6.0
+	github.com/hmcalister/GoChi-CommonMiddleware v1.0.0
 	github.com/lestrrat-go/jwx/v2 v2.1.2
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/microcosm-cc/bluemonday v1.0.27
@@ -20,7 +21,6 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
-	github.com/hmcalister/GoChi-CommonMiddleware v0.0.0-20240628013914-c9fbe8f105c0 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.2 // indirect
 	github.com/lestrrat-go/httpcc v1.0.1 // indirect
 	github.com/lestrrat-go/httprc v1.0.6 // indirect
