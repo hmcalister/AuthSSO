@@ -1,6 +1,4 @@
-document.getElementById("registerForm").addEventListener("submit", function (event) {
-    event.preventDefault();
-
+async function registerRequest() {
     const password = document.getElementById("Password").value;
     const confirmPassword = document.getElementById("confirm_password").value;
     const errorMessageElement = document.getElementById("errorMessage");
@@ -20,24 +18,25 @@ document.getElementById("registerForm").addEventListener("submit", function (eve
         password: password
     };
 
-    fetch('/api/register', {
+    const response = await fetch('/api/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(registerData)
     })
-        .then((response) => {
-            if (response.status == 201) {
-                errorMessageElement.style.display = "none";
-                window.location.href = '/login.html';
-            } else {
-                errorMessageElement.style.display = "block";
-                return response.text()
-            }
-        })
-        .then((errorMessage) => {
-            errorMessageElement.innerHTML = errorMessage;
-        })
-        .catch(error => console.error('Error:', error));
+    
+
+    if (response.status == 201) {
+        window.location.href = '/login.html';
+    } else {
+        const errorMessage = await response.text()
+        errorMessageElement.style.display = "block";
+        errorMessageElement.innerHTML = errorMessage;
+    }
+}
+
+document.getElementById("registerForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    registerRequest();
 });
