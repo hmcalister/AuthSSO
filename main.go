@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"log/slog"
 	"net/http"
 	"os"
 
@@ -10,9 +12,8 @@ import (
 	authenticationmaster "github.com/hmcalister/AuthSSO/authenticationMaster"
 	"github.com/hmcalister/AuthSSO/database"
 	commonMiddleware "github.com/hmcalister/GoChi-CommonMiddleware"
+	"github.com/phsym/console-slog"
 
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
@@ -37,43 +38,45 @@ func init() {
 		MaxAge:   31,
 		Compress: true,
 	}
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	log.Logger = log.
-		With().Caller().Logger().
-		With().Timestamp().Logger()
 
-	log.Logger = log.Output(logFileHandle)
-	if *debugFlag {
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
-
-		consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout}
-		multiWriter := zerolog.MultiLevelWriter(consoleWriter, logFileHandle)
-		log.Logger = log.Output(multiWriter)
+	var slogHandler slog.Handler
+	if !*debugFlag {
+		multiWriter := io.MultiWriter(os.Stdout, logFileHandle)
+		slogHandler = slog.NewJSONHandler(multiWriter, &slog.HandlerOptions{
+			AddSource: true,
+			Level:     slog.LevelInfo,
+		})
+	} else {
+		slogHandler = console.NewHandler(os.Stdout, &console.HandlerOptions{
+			AddSource: true,
+			Level:     slog.LevelDebug,
+		})
 	}
+	slog.SetDefault(slog.New(
+		slogHandler,
+	))
 
-	log.Debug().
-		Str("DatabaseFilePath", *databaseFilePath).
-		Msg("Creating Database")
+	slog.Debug("Creating Database", "DatabaseFilePath", *databaseFilePath)
 	databaseManager, err = database.NewDatabase(*databaseFilePath)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error during creation of database manager")
+		slog.Error("Error during creation of database manager", "Error", err)
+		os.Exit(1)
 	}
 
 	secretKey, err = os.ReadFile(*secretKeyFile)
 	if err != nil {
-		log.Fatal().Str("FilePath", *secretKeyFile).Err(err).Msg("Could not open secret file for JWTAuth")
+		slog.Error("Could not open secret file for JWTAuth", "FilePath", *secretKeyFile, "Error", err)
+		os.Exit(1)
 	}
-
-	log.Debug().Msg("End Init Func")
 }
 
 func main() {
 	defer databaseManager.CloseDatabase()
 
-	log.Debug().Msg("Start Main Func")
+	slog.Debug("Start Main Func")
 
 	router := chi.NewRouter()
-	router.Use(commonMiddleware.ZerologLogger)
+	router.Use(commonMiddleware.SlogLogger)
 	router.Use(commonMiddleware.RecoverWithInternalServerError)
 
 	authMaster := authenticationmaster.NewAuthenticationMaster(databaseManager, secretKey)
@@ -82,9 +85,10 @@ func main() {
 	router.Get("/api/authenticate", authMaster.AuthenticateRequest)
 
 	targetBindAddress := fmt.Sprintf("localhost:%v", *port)
-	log.Info().Msgf("Starting server on %v", targetBindAddress)
+	slog.Info("Starting server", "Address", targetBindAddress)
 	err := http.ListenAndServe(targetBindAddress, router)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error during http listen and serve")
+		slog.Error("Error during http listen and serve", "Error", err)
+		os.Exit(1)
 	}
 }
