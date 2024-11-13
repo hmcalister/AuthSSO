@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"log/slog"
 	"net/http"
 	"os"
@@ -40,16 +39,14 @@ func init() {
 	}
 
 	var slogHandler slog.Handler
-	if !*debugFlag {
-		multiWriter := io.MultiWriter(os.Stdout, logFileHandle)
-		slogHandler = slog.NewJSONHandler(multiWriter, &slog.HandlerOptions{
-			AddSource: true,
-			Level:     slog.LevelInfo,
-		})
-	} else {
+	if *debugFlag {
 		slogHandler = console.NewHandler(os.Stdout, &console.HandlerOptions{
 			AddSource: true,
 			Level:     slog.LevelDebug,
+		})
+	} else {
+		slogHandler = slog.NewJSONHandler(logFileHandle, &slog.HandlerOptions{
+			Level: slog.LevelInfo,
 		})
 	}
 	slog.SetDefault(slog.New(
